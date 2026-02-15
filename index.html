@@ -527,6 +527,118 @@
             grid-column: 1 / -1;
         }
 
+        /* Dashboard Styles */
+        .dashboard-section {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .dashboard-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .dashboard-title {
+            color: #fff;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .progress-item {
+            margin-bottom: 18px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .progress-label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .progress-value {
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .progress-bar {
+            height: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease, background 0.3s ease;
+        }
+
+        .income-fill {
+            background: linear-gradient(90deg, #22c55e, #16a34a);
+        }
+
+        .expense-fill {
+            background: linear-gradient(90deg, #ef4444, #dc2626);
+        }
+
+        .balance-fill {
+            background: linear-gradient(90deg, #3b82f6, #2563eb);
+        }
+
+        .balance-fill.negative {
+            background: linear-gradient(90deg, #f59e0b, #d97706);
+        }
+
+        .percentage-display {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .percentage-item {
+            text-align: center;
+        }
+
+        .percentage-label {
+            display: block;
+            color: #64748b;
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+        }
+
+        .percentage-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #7c3aed, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .percentage-value.danger {
+            background: linear-gradient(90deg, #ef4444, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .percentage-value.success {
+            background: linear-gradient(90deg, #22c55e, #14b8a6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
         /* Payment Summary */
         .payment-summary {
             display: grid;
@@ -792,7 +904,7 @@
                         <br><code>id | desc | amount | currency | method | date</code>
                     </li>
                     <li>
-                        <strong>في ورقة Settings:</strong> اكتب <code>exchangeRate</code> في A1 و <code>2.65</code> في B1
+                        <strong>في ورقة Settings:</strong> اكتب <code>exchangeRate</code> في A1 و <code>2.45612</code> في B1
                     </li>
                     <li>
                         <strong>افتح Apps Script:</strong> Extensions → Apps Script
@@ -882,6 +994,106 @@
                         <div class="summary-item mad-balance">
                             <h3>الرصيد</h3>
                             <div class="value" id="madBalance">0.00</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard with Visual Indicators -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="icon" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">📈</div>
+                    <h2>لوحة المؤشرات</h2>
+                </div>
+
+                <!-- SAR Dashboard -->
+                <div class="dashboard-section">
+                    <h3 class="dashboard-title">🇸🇦 الريال السعودي</h3>
+                    
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span class="progress-label">الدخل</span>
+                            <span class="progress-value" id="sarIncomePercent">0 ر.س</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill income-fill" id="sarIncomeBar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span class="progress-label">المصروفات</span>
+                            <span class="progress-value" id="sarExpensePercent">0 ر.س</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill expense-fill" id="sarExpenseBar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span class="progress-label">المتبقي</span>
+                            <span class="progress-value" id="sarBalancePercent">0 ر.س</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill balance-fill" id="sarBalanceBar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="percentage-display">
+                        <div class="percentage-item">
+                            <span class="percentage-label">نسبة الصرف</span>
+                            <span class="percentage-value" id="sarSpentPercent">0%</span>
+                        </div>
+                        <div class="percentage-item">
+                            <span class="percentage-label">نسبة المتبقي</span>
+                            <span class="percentage-value" id="sarRemainingPercent">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MAD Dashboard -->
+                <div class="dashboard-section">
+                    <h3 class="dashboard-title">🇲🇦 الدرهم المغربي</h3>
+                    
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span class="progress-label">الدخل</span>
+                            <span class="progress-value" id="madIncomePercent">0 د.م</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill income-fill" id="madIncomeBar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span class="progress-label">المصروفات</span>
+                            <span class="progress-value" id="madExpensePercent">0 د.م</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill expense-fill" id="madExpenseBar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span class="progress-label">المتبقي</span>
+                            <span class="progress-value" id="madBalancePercent">0 د.م</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill balance-fill" id="madBalanceBar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="percentage-display">
+                        <div class="percentage-item">
+                            <span class="percentage-label">نسبة الصرف</span>
+                            <span class="percentage-value" id="madSpentPercent">0%</span>
+                        </div>
+                        <div class="percentage-item">
+                            <span class="percentage-label">نسبة المتبقي</span>
+                            <span class="percentage-value" id="madRemainingPercent">0%</span>
                         </div>
                     </div>
                 </div>
@@ -1563,6 +1775,74 @@
             document.getElementById('barqTotal').textContent = methodTotals.barq.toFixed(2) + ' ر.س';
             document.getElementById('d360Total').textContent = methodTotals.d360.toFixed(2) + ' ر.س';
             document.getElementById('saibTotal').textContent = methodTotals.saib.toFixed(2) + ' ر.س';
+
+            // Update Dashboard
+            updateDashboard(sarIncomeTotal, sarExpenseTotal, sarBalance, madIncomeTotal, madExpenseTotal, madBalance);
+        }
+
+        // Update Dashboard Indicators
+        function updateDashboard(sarIncome, sarExpense, sarBalance, madIncome, madExpense, madBalance) {
+            // SAR Dashboard
+            const sarMax = Math.max(sarIncome, sarExpense, Math.abs(sarBalance), 1);
+            
+            document.getElementById('sarIncomePercent').textContent = sarIncome.toFixed(2) + ' ر.س';
+            document.getElementById('sarExpensePercent').textContent = sarExpense.toFixed(2) + ' ر.س';
+            document.getElementById('sarBalancePercent').textContent = sarBalance.toFixed(2) + ' ر.س';
+            
+            document.getElementById('sarIncomeBar').style.width = (sarIncome / sarMax * 100) + '%';
+            document.getElementById('sarExpenseBar').style.width = (sarExpense / sarMax * 100) + '%';
+            document.getElementById('sarBalanceBar').style.width = (Math.abs(sarBalance) / sarMax * 100) + '%';
+            
+            // Balance bar color
+            const sarBalanceBar = document.getElementById('sarBalanceBar');
+            if (sarBalance < 0) {
+                sarBalanceBar.classList.add('negative');
+            } else {
+                sarBalanceBar.classList.remove('negative');
+            }
+            
+            // SAR Percentages
+            const sarSpentPercent = sarIncome > 0 ? (sarExpense / sarIncome * 100) : 0;
+            const sarRemainingPercent = sarIncome > 0 ? (sarBalance / sarIncome * 100) : 0;
+            
+            const sarSpentEl = document.getElementById('sarSpentPercent');
+            sarSpentEl.textContent = sarSpentPercent.toFixed(1) + '%';
+            sarSpentEl.className = 'percentage-value' + (sarSpentPercent > 80 ? ' danger' : '');
+            
+            const sarRemainingEl = document.getElementById('sarRemainingPercent');
+            sarRemainingEl.textContent = sarRemainingPercent.toFixed(1) + '%';
+            sarRemainingEl.className = 'percentage-value' + (sarRemainingPercent > 20 ? ' success' : sarRemainingPercent < 0 ? ' danger' : '');
+            
+            // MAD Dashboard
+            const madMax = Math.max(madIncome, madExpense, Math.abs(madBalance), 1);
+            
+            document.getElementById('madIncomePercent').textContent = madIncome.toFixed(2) + ' د.م';
+            document.getElementById('madExpensePercent').textContent = madExpense.toFixed(2) + ' د.م';
+            document.getElementById('madBalancePercent').textContent = madBalance.toFixed(2) + ' د.م';
+            
+            document.getElementById('madIncomeBar').style.width = (madIncome / madMax * 100) + '%';
+            document.getElementById('madExpenseBar').style.width = (madExpense / madMax * 100) + '%';
+            document.getElementById('madBalanceBar').style.width = (Math.abs(madBalance) / madMax * 100) + '%';
+            
+            // Balance bar color
+            const madBalanceBar = document.getElementById('madBalanceBar');
+            if (madBalance < 0) {
+                madBalanceBar.classList.add('negative');
+            } else {
+                madBalanceBar.classList.remove('negative');
+            }
+            
+            // MAD Percentages
+            const madSpentPercent = madIncome > 0 ? (madExpense / madIncome * 100) : 0;
+            const madRemainingPercent = madIncome > 0 ? (madBalance / madIncome * 100) : 0;
+            
+            const madSpentEl = document.getElementById('madSpentPercent');
+            madSpentEl.textContent = madSpentPercent.toFixed(1) + '%';
+            madSpentEl.className = 'percentage-value' + (madSpentPercent > 80 ? ' danger' : '');
+            
+            const madRemainingEl = document.getElementById('madRemainingPercent');
+            madRemainingEl.textContent = madRemainingPercent.toFixed(1) + '%';
+            madRemainingEl.className = 'percentage-value' + (madRemainingPercent > 20 ? ' success' : madRemainingPercent < 0 ? ' danger' : '');
         }
 
         // SAIB Withdrawal - Same currency (MAD to MAD)
