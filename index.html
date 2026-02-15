@@ -1184,7 +1184,7 @@
                     localStorage.setItem('sheetsApiUrl', apiUrl);
                     incomes = data.incomes || [];
                     expenses = data.expenses || [];
-                    document.getElementById('exchangeRate').value = data.exchangeRate || 2.65;
+                    document.getElementById('exchangeRate').value = data.exchangeRate || 2.4561;
                     
                     renderTables();
                     updateSummary();
@@ -1219,7 +1219,7 @@
                 if (data.success) {
                     incomes = data.incomes || [];
                     expenses = data.expenses || [];
-                    document.getElementById('exchangeRate').value = data.exchangeRate || 2.65;
+                    document.getElementById('exchangeRate').value = data.exchangeRate || 2.4561;
                     
                     renderTables();
                     updateSummary();
@@ -1257,7 +1257,7 @@
 
         // Get exchange rate
         function getExchangeRate() {
-            return parseFloat(document.getElementById('exchangeRate').value) || 2.65;
+            return parseFloat(document.getElementById('exchangeRate').value) || 2.4561;
         }
 
         // Currency Converter Functions
