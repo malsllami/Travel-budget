@@ -1009,6 +1009,33 @@
                 <button class="btn btn-primary" style="background: linear-gradient(135deg, #f59e0b, #d97706);" onclick="atmWithdraw()">
                     🏧 تنفيذ عملية السحب
                 </button>
+                
+                <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 25px 0;">
+                
+                <!-- SAIB Withdrawal Section -->
+                <div class="card-header" style="border-bottom: none; padding-bottom: 0;">
+                    <div class="icon" style="background: linear-gradient(135deg, #14b8a6, #0d9488);">🏦</div>
+                    <h2>سحب من بطاقة العملات (الاستثمار)</h2>
+                </div>
+                
+                <p style="color: #94a3b8; margin-bottom: 20px; font-size: 0.9rem;">
+                    السحب بالدرهم من بطاقة مشحونة بالدرهم - سيتم: خصم من البطاقة + إضافة كاش
+                </p>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>المبلغ المسحوب (درهم مغربي)</label>
+                        <input type="number" id="saibAtmAmount" placeholder="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label>ملاحظات (اختياري)</label>
+                        <input type="text" id="saibAtmNote" placeholder="مثال: سحب من صراف...">
+                    </div>
+                </div>
+                
+                <button class="btn btn-primary" style="background: linear-gradient(135deg, #14b8a6, #0d9488);" onclick="saibWithdraw()">
+                    🏦 سحب من بطاقة الاستثمار
+                </button>
             </div>
 
             <!-- Income Table -->
@@ -1536,6 +1563,103 @@
             document.getElementById('barqTotal').textContent = methodTotals.barq.toFixed(2) + ' ر.س';
             document.getElementById('d360Total').textContent = methodTotals.d360.toFixed(2) + ' ر.س';
             document.getElementById('saibTotal').textContent = methodTotals.saib.toFixed(2) + ' ر.س';
+        }
+
+        // SAIB Withdrawal - Same currency (MAD to MAD)
+        async function saibWithdraw() {
+            const madAmount = parseFloat(document.getElementById('saibAtmAmount').value);
+            const note = document.getElementById('saibAtmNote').value.trim() || 'سحب من بطاقة الاستثمار';
+            
+            if (!madAmount || madAmount <= 0) {
+                showToast('الرجاء إدخال مبلغ السحب', 'error');
+                return;
+            }
+            
+            showLoading();
+            
+            try {
+                // 1. Add Expense (MAD) - Deduct from SAIB card
+                const expenseDesc = `🏦 ${note} - خصم من بطاقة الاستثمار`;
+                
+                if (isConnected) {
+                    const expenseParams = new URLSearchParams({
+                        action: 'addExpense',
+                        desc: expenseDesc,
+                        amount: madAmount.toFixed(2),
+                        currency: 'MAD',
+                        method: 'saib'
+                    });
+                    
+                    const expenseResponse = await fetch(`${apiUrl}?${expenseParams}`);
+                    const expenseData = await expenseResponse.json();
+                    
+                    if (expenseData.success) {
+                        expenses.push({
+                            id: expenseData.id,
+                            desc: expenseDesc,
+                            amount: madAmount.toFixed(2),
+                            currency: 'MAD',
+                            method: 'saib'
+                        });
+                    }
+                } else {
+                    expenses.push({
+                        id: Date.now(),
+                        desc: expenseDesc,
+                        amount: madAmount.toFixed(2),
+                        currency: 'MAD',
+                        method: 'saib'
+                    });
+                }
+                
+                // 2. Add Income (MAD) - Cash received
+                const incomeDesc = `🏦 ${note} - استلام كاش`;
+                
+                if (isConnected) {
+                    const incomeParams = new URLSearchParams({
+                        action: 'addIncome',
+                        desc: incomeDesc,
+                        amount: madAmount.toFixed(2),
+                        currency: 'MAD',
+                        method: 'cash'
+                    });
+                    
+                    const incomeResponse = await fetch(`${apiUrl}?${incomeParams}`);
+                    const incomeData = await incomeResponse.json();
+                    
+                    if (incomeData.success) {
+                        incomes.push({
+                            id: incomeData.id,
+                            desc: incomeDesc,
+                            amount: madAmount.toFixed(2),
+                            currency: 'MAD',
+                            method: 'cash'
+                        });
+                    }
+                } else {
+                    incomes.push({
+                        id: Date.now() + 1,
+                        desc: incomeDesc,
+                        amount: madAmount.toFixed(2),
+                        currency: 'MAD',
+                        method: 'cash'
+                    });
+                }
+                
+                // Clear form
+                document.getElementById('saibAtmAmount').value = '';
+                document.getElementById('saibAtmNote').value = '';
+                
+                renderTables();
+                updateSummary();
+                
+                showToast(`تم السحب: ${madAmount} د.م من بطاقة الاستثمار`, 'success');
+                
+            } catch (error) {
+                showToast('فشلت العملية: ' + error.message, 'error');
+            }
+            
+            hideLoading();
         }
 
         // Calculate ATM SAR amount
