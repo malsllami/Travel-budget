@@ -431,6 +431,7 @@
         .tag-platinum { background: rgba(168, 85, 247, 0.2); color: #a855f7; }
         .tag-barq { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
         .tag-d360 { background: rgba(236, 72, 153, 0.2); color: #ec4899; }
+        .tag-saib { background: rgba(20, 184, 166, 0.2); color: #14b8a6; }
 
         .tag-sar { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
         .tag-mad { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
@@ -818,7 +819,7 @@
                 <div class="exchange-rate-section">
                     <label>سعر الصرف (1 ريال سعودي = ؟ درهم مغربي)</label>
                     <div class="exchange-rate-row">
-                        <input type="number" id="exchangeRate" value="2.4561" step="0.4072">
+                        <input type="number" id="exchangeRate" value="2.65" step="0.01">
                         <button onclick="saveExchangeRate()">💾 حفظ</button>
                     </div>
                 </div>
@@ -895,7 +896,7 @@
                 
                 <div class="form-group">
                     <label>الوصف</label>
-                    <input type="text" id="incomeDesc" placeholder="مثال: رصيد، تحويل...">
+                    <input type="text" id="incomeDesc" placeholder="مثال: راتب، تحويل...">
                 </div>
                 
                 <div class="form-row">
@@ -917,9 +918,9 @@
                     <select id="incomeMethod">
                         <option value="cash">💵 كاش</option>
                         <option value="platinum">💳 بلاتينيوم الراجحي</option>
-                        <option value="Currency">💳  بطاقة عملات الاستثمار</option>
                         <option value="barq">⚡ برق</option>
                         <option value="d360">🔵 D360</option>
+                        <option value="saib">🏦 بطاقة العملات - الاستثمار</option>
                     </select>
                 </div>
                 
@@ -937,7 +938,7 @@
                 
                 <div class="form-group">
                     <label>الوصف</label>
-                    <input type="text" id="expenseDesc" placeholder="مثال:  فندق، مطعم...">
+                    <input type="text" id="expenseDesc" placeholder="مثال: فندق، مطعم...">
                 </div>
                 
                 <div class="form-row">
@@ -959,14 +960,54 @@
                     <select id="expenseMethod">
                         <option value="cash">💵 كاش</option>
                         <option value="platinum">💳 بلاتينيوم الراجحي</option>
-                        <option value="Currency">💳  بطاقة عملات الاستثمار</option>
                         <option value="barq">⚡ برق</option>
                         <option value="d360">🔵 D360</option>
+                        <option value="saib">🏦 بطاقة العملات - الاستثمار</option>
                     </select>
                 </div>
                 
                 <button class="btn btn-primary btn-expense" onclick="addExpense()" id="addExpenseBtn">
                     ➕ إضافة المصروف
+                </button>
+            </div>
+
+            <!-- ATM Withdrawal -->
+            <div class="card full-width">
+                <div class="card-header">
+                    <div class="icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">🏧</div>
+                    <h2>سحب من صراف (ATM)</h2>
+                </div>
+                
+                <p style="color: #94a3b8; margin-bottom: 20px; font-size: 0.9rem;">
+                    عند السحب من الصراف، سيتم تلقائياً: خصم المبلغ بالريال من البطاقة + إضافة المبلغ بالدرهم ككاش
+                </p>
+                
+                <div class="form-row" style="grid-template-columns: 1fr 1fr 1fr;">
+                    <div class="form-group">
+                        <label>البطاقة المسحوب منها</label>
+                        <select id="atmCard">
+                            <option value="barq">⚡ برق</option>
+                            <option value="d360">🔵 D360</option>
+                            <option value="platinum">💳 بلاتينيوم الراجحي</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>المبلغ المسحوب (درهم مغربي)</label>
+                        <input type="number" id="atmAmount" placeholder="0.00" oninput="calculateAtmSar()">
+                    </div>
+                    <div class="form-group">
+                        <label>المبلغ المخصوم (ريال سعودي)</label>
+                        <input type="text" id="atmAmountSar" placeholder="سيتم الحساب تلقائياً" readonly style="background: rgba(124, 58, 237, 0.1); color: #a78bfa;">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>ملاحظات (اختياري)</label>
+                    <input type="text" id="atmNote" placeholder="مثال: سحب من صراف المطار...">
+                </div>
+                
+                <button class="btn btn-primary" style="background: linear-gradient(135deg, #f59e0b, #d97706);" onclick="atmWithdraw()">
+                    🏧 تنفيذ عملية السحب
                 </button>
             </div>
 
@@ -1044,10 +1085,6 @@
                         <h4>💳 بلاتينيوم الراجحي</h4>
                         <div class="amount amount-negative" id="platinumTotal">0.00 ر.س</div>
                     </div>
-                    <div class="Currency-card">
-                        <h4>💳 بطاقة عملات الاستثمار </h4>
-                        <div class="amount amount-negative" id="platinumTotal">0.00 ر.س</div>
-                    </div>
                     <div class="payment-card">
                         <h4>⚡ برق</h4>
                         <div class="amount amount-negative" id="barqTotal">0.00 ر.س</div>
@@ -1055,6 +1092,10 @@
                     <div class="payment-card">
                         <h4>🔵 D360</h4>
                         <div class="amount amount-negative" id="d360Total">0.00 ر.س</div>
+                    </div>
+                    <div class="payment-card">
+                        <h4>🏦 بطاقة العملات - الاستثمار</h4>
+                        <div class="amount amount-negative" id="saibTotal">0.00 ر.س</div>
                     </div>
                 </div>
             </div>
@@ -1216,7 +1257,7 @@
 
         // Get exchange rate
         function getExchangeRate() {
-            return parseFloat(document.getElementById('exchangeRate').value) || 2.4561;
+            return parseFloat(document.getElementById('exchangeRate').value) || 2.65;
         }
 
         // Currency Converter Functions
@@ -1244,9 +1285,9 @@
             const methods = {
                 'cash': '<span class="tag tag-cash">💵 كاش</span>',
                 'platinum': '<span class="tag tag-platinum">💳 بلاتينيوم</span>',
-                'Currency': '<span class="tag tag-Currency">💳 عملات</span>',
                 'barq': '<span class="tag tag-barq">⚡ برق</span>',
-                'd360': '<span class="tag tag-d360">🔵 D360</span>'
+                'd360': '<span class="tag tag-d360">🔵 D360</span>',
+                'saib': '<span class="tag tag-saib">🏦 الاستثمار</span>'
             };
             return methods[method] || method;
         }
@@ -1484,7 +1525,7 @@
             document.getElementById('madBalance').textContent = madBalance.toFixed(2) + ' د.م';
 
             // Calculate payment method totals (expenses only, converted to SAR)
-            const methodTotals = { cash: 0, platinum: 0, barq: 0, d360: 0 };
+            const methodTotals = { cash: 0, platinum: 0, barq: 0, d360: 0, saib: 0 };
             expenses.forEach(e => {
                 const amountInSar = e.currency === 'SAR' ? parseFloat(e.amount) : parseFloat(e.amount) / getExchangeRate();
                 methodTotals[e.method] += amountInSar;
@@ -1494,6 +1535,123 @@
             document.getElementById('platinumTotal').textContent = methodTotals.platinum.toFixed(2) + ' ر.س';
             document.getElementById('barqTotal').textContent = methodTotals.barq.toFixed(2) + ' ر.س';
             document.getElementById('d360Total').textContent = methodTotals.d360.toFixed(2) + ' ر.س';
+            document.getElementById('saibTotal').textContent = methodTotals.saib.toFixed(2) + ' ر.س';
+        }
+
+        // Calculate ATM SAR amount
+        function calculateAtmSar() {
+            const madAmount = parseFloat(document.getElementById('atmAmount').value) || 0;
+            const rate = getExchangeRate();
+            const sarAmount = madAmount / rate;
+            document.getElementById('atmAmountSar').value = sarAmount.toFixed(2) + ' ر.س';
+        }
+
+        // ATM Withdrawal - Creates 2 transactions
+        async function atmWithdraw() {
+            const card = document.getElementById('atmCard').value;
+            const madAmount = parseFloat(document.getElementById('atmAmount').value);
+            const note = document.getElementById('atmNote').value.trim() || 'سحب من صراف';
+            
+            if (!madAmount || madAmount <= 0) {
+                showToast('الرجاء إدخال مبلغ السحب', 'error');
+                return;
+            }
+            
+            const rate = getExchangeRate();
+            const sarAmount = madAmount / rate;
+            
+            const cardNames = {
+                'barq': 'برق',
+                'd360': 'D360',
+                'platinum': 'بلاتينيوم الراجحي'
+            };
+            
+            showLoading();
+            
+            try {
+                // 1. Add Expense (SAR) - Deduct from card
+                const expenseDesc = `🏧 ${note} - خصم من ${cardNames[card]}`;
+                
+                if (isConnected) {
+                    const expenseParams = new URLSearchParams({
+                        action: 'addExpense',
+                        desc: expenseDesc,
+                        amount: sarAmount.toFixed(2),
+                        currency: 'SAR',
+                        method: card
+                    });
+                    
+                    const expenseResponse = await fetch(`${apiUrl}?${expenseParams}`);
+                    const expenseData = await expenseResponse.json();
+                    
+                    if (expenseData.success) {
+                        expenses.push({
+                            id: expenseData.id,
+                            desc: expenseDesc,
+                            amount: sarAmount.toFixed(2),
+                            currency: 'SAR',
+                            method: card
+                        });
+                    }
+                } else {
+                    expenses.push({
+                        id: Date.now(),
+                        desc: expenseDesc,
+                        amount: sarAmount.toFixed(2),
+                        currency: 'SAR',
+                        method: card
+                    });
+                }
+                
+                // 2. Add Income (MAD) - Cash received
+                const incomeDesc = `🏧 ${note} - استلام كاش`;
+                
+                if (isConnected) {
+                    const incomeParams = new URLSearchParams({
+                        action: 'addIncome',
+                        desc: incomeDesc,
+                        amount: madAmount.toFixed(2),
+                        currency: 'MAD',
+                        method: 'cash'
+                    });
+                    
+                    const incomeResponse = await fetch(`${apiUrl}?${incomeParams}`);
+                    const incomeData = await incomeResponse.json();
+                    
+                    if (incomeData.success) {
+                        incomes.push({
+                            id: incomeData.id,
+                            desc: incomeDesc,
+                            amount: madAmount.toFixed(2),
+                            currency: 'MAD',
+                            method: 'cash'
+                        });
+                    }
+                } else {
+                    incomes.push({
+                        id: Date.now() + 1,
+                        desc: incomeDesc,
+                        amount: madAmount.toFixed(2),
+                        currency: 'MAD',
+                        method: 'cash'
+                    });
+                }
+                
+                // Clear form
+                document.getElementById('atmAmount').value = '';
+                document.getElementById('atmAmountSar').value = '';
+                document.getElementById('atmNote').value = '';
+                
+                renderTables();
+                updateSummary();
+                
+                showToast(`تم السحب: ${madAmount} د.م = ${sarAmount.toFixed(2)} ر.س`, 'success');
+                
+            } catch (error) {
+                showToast('فشلت العملية: ' + error.message, 'error');
+            }
+            
+            hideLoading();
         }
 
         // Initialize
