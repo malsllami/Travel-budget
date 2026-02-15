@@ -818,7 +818,7 @@
                 <div class="exchange-rate-section">
                     <label>سعر الصرف (1 ريال سعودي = ؟ درهم مغربي)</label>
                     <div class="exchange-rate-row">
-                        <input type="number" id="exchangeRate" value="2.65" step="0.01">
+                        <input type="number" id="exchangeRate" value="2.4561" step="0.4072">
                         <button onclick="saveExchangeRate()">💾 حفظ</button>
                     </div>
                 </div>
@@ -895,7 +895,7 @@
                 
                 <div class="form-group">
                     <label>الوصف</label>
-                    <input type="text" id="incomeDesc" placeholder="مثال: راتب، تحويل...">
+                    <input type="text" id="incomeDesc" placeholder="مثال: رصيد، تحويل...">
                 </div>
                 
                 <div class="form-row">
@@ -917,6 +917,7 @@
                     <select id="incomeMethod">
                         <option value="cash">💵 كاش</option>
                         <option value="platinum">💳 بلاتينيوم الراجحي</option>
+                        <option value="Currency">💳  بطاقة عملات الاستثمار</option>
                         <option value="barq">⚡ برق</option>
                         <option value="d360">🔵 D360</option>
                     </select>
@@ -936,7 +937,7 @@
                 
                 <div class="form-group">
                     <label>الوصف</label>
-                    <input type="text" id="expenseDesc" placeholder="مثال: فندق، مطعم...">
+                    <input type="text" id="expenseDesc" placeholder="مثال:  فندق، مطعم...">
                 </div>
                 
                 <div class="form-row">
@@ -958,6 +959,7 @@
                     <select id="expenseMethod">
                         <option value="cash">💵 كاش</option>
                         <option value="platinum">💳 بلاتينيوم الراجحي</option>
+                        <option value="Currency">💳  بطاقة عملات الاستثمار</option>
                         <option value="barq">⚡ برق</option>
                         <option value="d360">🔵 D360</option>
                     </select>
@@ -1040,6 +1042,10 @@
                     </div>
                     <div class="payment-card">
                         <h4>💳 بلاتينيوم الراجحي</h4>
+                        <div class="amount amount-negative" id="platinumTotal">0.00 ر.س</div>
+                    </div>
+                    <div class="Currency-card">
+                        <h4>💳 بطاقة عملات الاستثمار </h4>
                         <div class="amount amount-negative" id="platinumTotal">0.00 ر.س</div>
                     </div>
                     <div class="payment-card">
@@ -1210,7 +1216,7 @@
 
         // Get exchange rate
         function getExchangeRate() {
-            return parseFloat(document.getElementById('exchangeRate').value) || 2.65;
+            return parseFloat(document.getElementById('exchangeRate').value) || 2.4561;
         }
 
         // Currency Converter Functions
@@ -1238,6 +1244,7 @@
             const methods = {
                 'cash': '<span class="tag tag-cash">💵 كاش</span>',
                 'platinum': '<span class="tag tag-platinum">💳 بلاتينيوم</span>',
+                'Currency': '<span class="tag tag-Currency">💳 عملات</span>',
                 'barq': '<span class="tag tag-barq">⚡ برق</span>',
                 'd360': '<span class="tag tag-d360">🔵 D360</span>'
             };
